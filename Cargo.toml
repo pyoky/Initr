@@ -1,0 +1,25 @@
+[package]
+name = "initr"
+version = "0.1.0"
+edition = "2021"
+authors = ["Pyokyeong Son"]
+description  = "Initializes basic tools"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "3.1.6", features = ["derive"] }
+google-drive = "0.2.7"
+tokio = { version = "1.17.0", features = ["full"] }
+open = "1"
+rocket = "0.5.0-rc.1"
+
+[patch.crates-io]
+google-drive = { path = "./drive"}
+
+[profile.release]
+opt-level = 'z'     # Optimize for size.
+lto = true          # Enable Link Time Optimization
+codegen-units = 1   # Reduce number of codegen units to increase optimizations.
+panic = 'abort'     # Abort on panic
+strip = true        # Strip symbols from binary*
