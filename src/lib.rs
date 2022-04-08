@@ -8,16 +8,35 @@ use google_drive;
 use google_drive::Client;
 use google_drive::traits::FileOps;
 
+static INITR_FOLDER_ID: &str = "1LgW3FWg3U1MVF_ZuP-RJ_0F42AgqeIi4";
+
+
+pub async fn print_files_in_initr_folder(client: &google_drive::Client) {
+    // Make a request according to API spcifications
+    let q = format!("mimeType != 'application/vnd.google-apps.folder' and \'{}\' in parents", INITR_FOLDER_ID);
+    let files = client.files();
+    let all_files = files.list_all(
+        "user", "", false, "", false, "folder", q.as_str(), "", false, false, "").await;
+    for file in all_files.unwrap() {
+        println!("{} in {:?} id {:?}", file.name, file.parents, file.id);
+    }
+}
+
 pub async fn download_file_to(client: &google_drive::Client, id: &str, dir: &path::Path) {
     let files = client.files();
     let res = files.download_by_id(id).await;
     let data = match res {
         Ok(d) => d,
-        Err(e) => panic!("error downloading : {:?}", e)
+        Err(e) => panic!("error downloading: {:?}", e)
     };
-    let mut file = fs::File::create(dir).unwrap();
+    let mut file = match fs::File::create(dir) {
+        Ok(f) => f,
+        Err(e) => panic!("error writing to file: {:?}", e)
+    };
     file.write_all(data.as_ref());
 }
+
+
 
 pub async fn init_drive() -> Client {
     let mut drive = Client::new(
