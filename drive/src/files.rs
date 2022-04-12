@@ -187,7 +187,6 @@ impl Files {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!("/files?{}", query_);
 
-        println!("url for request: {}", url);
         let mut resp: crate::types::FileList = self.client.get(&url, None).await?;
 
         let mut files = resp.files;

@@ -844,6 +844,8 @@ dependencies = [
  "home",
  "open",
  "rocket",
+ "serde",
+ "serde_json",
  "tokio",
  "zip",
 ]
